@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+SESSION_THRESHOLD = 300
+
 if __name__ == '__main__':
     directory = filedialog.askdirectory()
     # read ViewingActivity
@@ -23,6 +25,17 @@ if __name__ == '__main__':
     # lists for plotting
     hour_count = []
     day_hours = []
+
+    data.index = range(len(data))
+    for i in data.index:
+        if i < len(data) - 1:
+            diff = data.iloc[i]["Start Time"] - data.iloc[i + 1]["Stop Time"]
+            if diff.seconds < SESSION_THRESHOLD:
+                # print(diff)
+                data.at[i + 1, "Stop Time"] = data.loc[i, "Stop Time"]
+                data.at[i + 1, "Duration"] += data.loc[i, "Duration"]
+                data.drop(i, inplace=True)
+
     for hour in range(24):
         day_hours.append(hour)
         hour_count.append(list(data["Start Time"].dt.hour).count(hour))
