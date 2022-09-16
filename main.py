@@ -1,3 +1,4 @@
+import datetime
 from tkinter import filedialog
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     # lists for plotting
     hour_count = []
     day_hours = []
-
+    durations = []
     data.index = range(len(data))
     for i in data.index:
         if i < len(data) - 1:
@@ -39,6 +40,15 @@ if __name__ == '__main__':
     for hour in range(24):
         day_hours.append(hour)
         hour_count.append(list(data["Start Time"].dt.hour).count(hour))
+        durations.append(data[data["Start Time"].dt.hour == hour]["Duration"].mean())
+    durations_in_minutes = [time.seconds / 60 if time.seconds > 0 else 0 for time in durations]
+
+    fig, ax = plt.subplots(layout="constrained")
+    ax.bar(day_hours, durations_in_minutes)
+    ax.set_title("Netflix starting times grouped by hour")
+    ax.grid(linestyle="--")
+    ax.set_xticks(np.arange(0, 24, 1))
+    plt.show()
     fig, ax = plt.subplots(layout="constrained")
     ax.bar(day_hours, hour_count)
     ax.set_title("Netflix starting times grouped by hour")
