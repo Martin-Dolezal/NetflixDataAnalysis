@@ -3,7 +3,9 @@ from tkinter import filedialog
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
 
+matplotlib.use('TkAgg')
 SESSION_THRESHOLD = 300
 
 if __name__ == '__main__':
@@ -43,15 +45,14 @@ if __name__ == '__main__':
         durations.append(data[data["Start Time"].dt.hour == hour]["Duration"].mean())
     durations_in_minutes = [time.seconds / 60 if time.seconds > 0 else 0 for time in durations]
 
-    fig, ax = plt.subplots(layout="constrained")
-    ax.bar(day_hours, durations_in_minutes)
-    ax.set_title("Netflix starting times grouped by hour")
-    ax.grid(linestyle="--")
-    ax.set_xticks(np.arange(0, 24, 1))
-    plt.show()
-    fig, ax = plt.subplots(layout="constrained")
-    ax.bar(day_hours, hour_count)
-    ax.set_title("Netflix starting times grouped by hour")
-    ax.grid(linestyle="--")
-    ax.set_xticks(np.arange(0, 24, 1))
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figwidth(15)
+    ax1.bar(day_hours, hour_count)
+    ax1.set_title("Starting times grouped by hour")
+    ax1.grid(linestyle="--")
+    ax1.set_xticks(np.arange(0, 24, 1))
+    ax2.bar(day_hours, durations_in_minutes)
+    ax2.set_title("Average session duration")
+    ax2.grid(linestyle="--")
+    ax2.set_xticks(np.arange(0, 24, 1))
     plt.show()
